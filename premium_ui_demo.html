@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimKlinik THT - Medical Suite</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff', // Sky 50
+                            100: '#e0f2fe',
+                            500: '#0ea5e9', // Sky 500 (Light Blue)
+                            600: '#0284c7',
+                            700: '#0369a1',
+                        },
+                        neutral: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0', // Border Gray
+                            300: '#cbd5e1',
+                            800: '#1e293b',
+                        }
+                    },
+                    boxShadow: {
+                        'none': 'none',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        body {
+            background-color: #f8fafc;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .sidebar-active {
+            background-color: #f0f9ff;
+            /* Primary 50 */
+            color: #0284c7;
+            /* Primary 600 */
+            border-right: 3px solid #0284c7;
+        }
+
+        /* Flat Inputs */
+        input,
+        textarea,
+        select {
+            border: 1px solid #e2e8f0;
+            /* Neutral 200 */
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #0ea5e9;
+            /* Primary 500 */
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-slate-600 antialiased h-screen flex overflow-hidden" x-data="{ 
+    sidebarOpen: true, 
+    activeTab: 'pemeriksaan'
+}">
+
+    <!-- Sidebar -->
+    <aside
+        class="fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-neutral-200 transition-transform duration-300 flex flex-col lg:translate-x-0"
+        :class="{'translate-x-0': sidebarOpen, '-translate-x-full': !sidebarOpen}">
+
+        <!-- Brand -->
+        <div class="h-16 flex items-center px-6 border-b border-neutral-200">
+            <div class="flex items-center gap-3 text-primary-600">
+                <div class="bg-primary-50 p-1.5 rounded-lg border border-primary-100">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-800 leading-none">SimKlinik</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+            <div class="px-3 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Main Menu</div>
+
+            <a href="#" @click="activeTab = 'dashboard'"
+                :class="activeTab === 'dashboard' ? 'sidebar-active' : 'text-slate-500 hover:bg-neutral-50 hover:text-primary-600'"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                Dashboard
+            </a>
+
+            <a href="#" @click="activeTab = 'pendaftaran'"
+                :class="activeTab === 'pendaftaran' ? 'sidebar-active' : 'text-slate-500 hover:bg-neutral-50 hover:text-primary-600'"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                Pendaftaran
+            </a>
+
+            <a href="#" @click="activeTab = 'pemeriksaan'"
+                :class="activeTab === 'pemeriksaan' ? 'sidebar-active' : 'text-slate-500 hover:bg-neutral-50 hover:text-primary-600'"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group">
+                <i data-lucide="stethoscope" class="w-4 h-4"></i>
+                Pemeriksaan Dokter
+            </a>
+
+            <div class="px-3 mt-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Antrian</div>
+
+            <a href="#" @click="activeTab = 'antrian_tv'"
+                :class="activeTab === 'antrian_tv' ? 'sidebar-active' : 'text-slate-500 hover:bg-neutral-50 hover:text-primary-600'"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group">
+                <i data-lucide="monitor-play" class="w-4 h-4"></i>
+                Display Antrian TV
+            </a>
+        </nav>
+
+        <!-- Doctor Profile Profile -->
+        <div class="p-4 border-t border-neutral-200">
+            <div
+                class="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer border border-transparent hover:border-neutral-200">
+                <div
+                    class="w-8 h-8 rounded-full bg-primary-50 border border-primary-200 flex items-center justify-center text-primary-600">
+                    <span class="text-xs font-bold">DR</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-slate-800 truncate">dr. Spesialis THT</p>
+                    <p class="text-xs text-slate-500 truncate">Poli THT 01</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 lg:ml-72 flex flex-col h-full bg-white relative transition-all duration-300">
+
+        <!-- Topbar -->
+        <header
+            class="h-16 bg-white border-b border-neutral-200 sticky top-0 z-30 flex items-center justify-between px-6">
+            <div class="flex items-center gap-4">
+                <button @click="sidebarOpen = !sidebarOpen"
+                    class="p-2 rounded-lg hover:bg-neutral-100 text-slate-500 lg:hidden">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <h2 class="text-lg font-bold text-slate-800"
+                    x-text="activeTab === 'pemeriksaan' ? 'Pemeriksaan Pasien' : (activeTab === 'dashboard' ? 'Overview Klinik' : 'Pendaftaran')">
+                </h2>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div
+                    class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-primary-50 rounded-full border border-primary-100 text-primary-700 text-xs font-bold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-primary-500"></span>
+                    ONLINE
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-hidden relative">
+
+            <!-- EXAM VIEW -->
+            <div x-show="activeTab === 'pemeriksaan'" class="h-full flex flex-col lg:flex-row overflow-hidden">
+
+                <!-- Patient Queue (Left Panel) -->
+                <div class="w-full lg:w-80 bg-neutral-50 border-r border-neutral-200 flex flex-col z-20">
+                    <div class="p-4 border-b border-neutral-200">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold text-slate-700 text-sm">Antrian Pasien</h3>
+                            <span
+                                class="bg-white border border-neutral-200 px-2 py-0.5 rounded text-xs text-slate-500 font-medium">12
+                                Total</span>
+                        </div>
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                            <input type="text" placeholder="Cari pasien..."
+                                class="w-full pl-9 pr-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:border-primary-500">
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-3 space-y-2">
+                        <!-- Calling Card (Active) -->
+                        <div
+                            class="p-3 bg-white rounded-lg border-l-4 border-l-primary-500 border-y border-r border-neutral-200 cursor-pointer">
+                            <div class="flex justify-between items-start mb-1">
+                                <span
+                                    class="bg-primary-50 text-primary-700 border border-primary-100 font-bold text-xs px-2 py-0.5 rounded">A-01</span>
+                                <span
+                                    class="text-[10px] uppercase font-bold text-primary-600 tracking-wide">Dipanggil</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm">Budi Santoso</h4>
+                            <p class="text-xs text-slate-500 mb-3">UMUM - Dr. THT</p>
+                            <button
+                                class="w-full py-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-md text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                                <i data-lucide="mic" class="w-3 h-3"></i> Panggil
+                            </button>
+                        </div>
+
+                        <!-- Waiting List -->
+                        <div
+                            class="p-3 bg-white rounded-lg border border-neutral-200 hover:border-primary-300 cursor-pointer transition-colors">
+                            <div class="flex justify-between items-start mb-1">
+                                <span
+                                    class="bg-neutral-100 text-slate-600 border border-neutral-200 font-bold text-xs px-2 py-0.5 rounded">A-02</span>
+                                <span class="text-[10px] text-slate-400">10:45</span>
+                            </div>
+                            <h4 class="font-medium text-slate-700 text-sm">Siti Aminah</h4>
+                            <p class="text-xs text-slate-500">BPJS - Dr. THT</p>
+                        </div>
+
+                        <div
+                            class="p-3 bg-white rounded-lg border border-neutral-200 hover:border-primary-300 cursor-pointer transition-colors">
+                            <div class="flex justify-between items-start mb-1">
+                                <span
+                                    class="bg-neutral-100 text-slate-600 border border-neutral-200 font-bold text-xs px-2 py-0.5 rounded">A-03</span>
+                                <span class="text-[10px] text-slate-400">11:00</span>
+                            </div>
+                            <h4 class="font-medium text-slate-700 text-sm">Ahmad Dahlan</h4>
+                            <p class="text-xs text-slate-500">UMUM - Dr. THT</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Doctor Workspace (Right Panel) -->
+                <div class="flex-1 flex flex-col bg-white overflow-hidden relative">
+                    <!-- Patient Hero -->
+                    <div class="bg-white px-6 py-4 border-b border-neutral-200">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="flex items-center gap-4">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-primary-50 border border-primary-100 flex items-center justify-center text-primary-600 text-lg font-bold">
+                                    BS
+                                </div>
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-900">Budi Santoso</h2>
+                                    <div class="flex items-center gap-3 text-sm text-slate-500">
+                                        <span
+                                            class="font-mono text-xs bg-neutral-100 px-1.5 py-0.5 rounded border border-neutral-200">RM:
+                                            123456</span>
+                                        <span class="w-1 h-1 bg-neutral-300 rounded-full"></span>
+                                        <span>45 Th</span>
+                                        <span class="w-1 h-1 bg-neutral-300 rounded-full"></span>
+                                        <span>Laki-laki</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button
+                                    class="px-3 py-1.5 bg-white border border-neutral-300 rounded-lg text-sm font-medium text-slate-600 hover:bg-neutral-50 transition-colors">Riwayat</button>
+                                <button
+                                    class="px-3 py-1.5 bg-white border border-neutral-300 rounded-lg text-sm font-medium text-slate-600 hover:bg-neutral-50 transition-colors">BPJS</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Form -->
+                    <div class="flex-1 overflow-y-auto p-6">
+                        <div class="max-w-5xl mx-auto space-y-6">
+
+                            <!-- Vitals Strip -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="p-3 rounded-lg border border-neutral-200 bg-neutral-50">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                        Tekanan Darah</div>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-xl font-bold text-slate-800">120/80</span>
+                                        <span class="text-xs font-medium text-slate-400">mmHg</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded-lg border border-neutral-200 bg-neutral-50">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Suhu
+                                        Tubuh</div>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-xl font-bold text-slate-800">36.5</span>
+                                        <span class="text-xs font-medium text-slate-400">°C</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded-lg border border-neutral-200 bg-neutral-50">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                        Berat Badan</div>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-xl font-bold text-slate-800">70</span>
+                                        <span class="text-xs font-medium text-slate-400">kg</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 rounded-lg border border-neutral-200 bg-neutral-50">
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                        Tinggi Badan</div>
+                                    <div class="flex items-baseline gap-1">
+                                        <span class="text-xl font-bold text-slate-800">175</span>
+                                        <span class="text-xs font-medium text-slate-400">cm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SOAP Grid -->
+                            <div class="grid lg:grid-cols-2 gap-6">
+                                <!-- Col 1: S & O -->
+                                <div class="space-y-6">
+                                    <div class="border border-neutral-200 rounded-xl overflow-hidden">
+                                        <div
+                                            class="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center gap-2">
+                                            <span
+                                                class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">S</span>
+                                            <h3 class="font-bold text-slate-700 text-sm">Subjective</h3>
+                                        </div>
+                                        <textarea
+                                            class="w-full border-none p-4 text-slate-700 min-h-[120px] focus:ring-0 resize-none text-sm"
+                                            placeholder="Keluhan pasien..."></textarea>
+                                    </div>
+
+                                    <div class="border border-neutral-200 rounded-xl overflow-hidden">
+                                        <div
+                                            class="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center gap-2">
+                                            <span
+                                                class="w-6 h-6 rounded bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">O</span>
+                                            <h3 class="font-bold text-slate-700 text-sm">Objective</h3>
+                                        </div>
+                                        <textarea
+                                            class="w-full border-none p-4 text-slate-700 min-h-[120px] focus:ring-0 resize-none text-sm"
+                                            placeholder="Hasil pemeriksaan fisik..."></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Col 2: A & P -->
+                                <div class="space-y-6">
+                                    <div class="border border-neutral-200 rounded-xl overflow-hidden">
+                                        <div
+                                            class="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center gap-2">
+                                            <span
+                                                class="w-6 h-6 rounded bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">A</span>
+                                            <h3 class="font-bold text-slate-700 text-sm">Assessment</h3>
+                                        </div>
+                                        <div class="p-4">
+                                            <div class="relative mb-3">
+                                                <i data-lucide="search"
+                                                    class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                                                <input type="text" placeholder="Cari diagnosa ICD-10..."
+                                                    class="w-full pl-9 pr-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:border-primary-500 transition-all">
+                                            </div>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span
+                                                    class="inline-flex items-center gap-2 px-2 py-1 rounded bg-purple-50 text-purple-700 border border-purple-100 text-xs font-bold">
+                                                    H60.9 - Otitis Externa
+                                                    <button class="hover:bg-purple-200 rounded p-0.5"><i data-lucide="x"
+                                                            class="w-3 h-3"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="border border-neutral-200 rounded-xl overflow-hidden">
+                                        <div
+                                            class="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center gap-2">
+                                            <span
+                                                class="w-6 h-6 rounded bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">P</span>
+                                            <h3 class="font-bold text-slate-700 text-sm">Plan</h3>
+                                        </div>
+                                        <div class="p-4">
+                                            <textarea
+                                                class="w-full border border-neutral-200 rounded-lg p-3 text-slate-700 min-h-[80px] focus:border-primary-500 mb-3 text-sm"
+                                                placeholder="Instruksi & Resep..."></textarea>
+
+                                            <div class="relative mb-2">
+                                                <i data-lucide="search"
+                                                    class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                                                <input type="text" placeholder="Tambah Prosedur..."
+                                                    class="w-full pl-9 pr-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:border-primary-500 transition-all">
+                                            </div>
+                                            <div class="flex flex-wrap gap-2">
+                                                <span
+                                                    class="inline-flex items-center gap-2 px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold">
+                                                    Irigasi Telinga
+                                                    <button class="hover:bg-blue-200 rounded p-0.5"><i data-lucide="x"
+                                                            class="w-3 h-3"></i></button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simpan Action -->
+                    <div class="p-4 bg-white border-t border-neutral-200 flex justify-end gap-3 sticky bottom-0 z-30">
+                        <button
+                            class="px-5 py-2.5 rounded-lg border border-neutral-300 text-slate-600 text-sm font-bold hover:bg-neutral-50 transition-colors">Batal</button>
+                        <button
+                            class="px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg text-sm font-bold transition-all flex items-center gap-2">
+                            <i data-lucide="save" class="w-4 h-4"></i> Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PUBLIC DISPLAY TV VIEW -->
+            <div x-show="activeTab === 'antrian_tv'"
+                class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-0">
+                <!-- Close Button -->
+                <button @click="activeTab = 'dashboard'"
+                    class="absolute top-6 right-6 z-20 text-white/50 hover:text-white transition-colors"><i
+                        data-lucide="x" class="w-8 h-8"></i></button>
+
+                <div class="w-full h-full flex flex-col md:flex-row overflow-hidden relative">
+                    <!-- Background Flat Blue -->
+                    <div class="absolute inset-0 bg-primary-600 z-0"></div>
+
+                    <!-- Main Call Area -->
+                    <div
+                        class="flex-[2] flex flex-col items-center justify-center p-12 z-10 text-center text-white relative border-r border-white/20">
+                        <div class="uppercase tracking-[0.2em] font-medium text-xl mb-8 opacity-80">Sedang Dipanggil
+                        </div>
+
+                        <div
+                            class="bg-white text-primary-600 font-bold px-16 py-8 rounded-3xl text-[12rem] leading-none shadow-none mb-12">
+                            A-01
+                        </div>
+
+                        <div
+                            class="text-2xl font-semibold bg-primary-700/50 px-8 py-3 rounded-full border border-primary-500">
+                            Poli THT 01
+                        </div>
+                    </div>
+
+                    <!-- Side List -->
+                    <div class="flex-1 bg-white z-10 p-8 flex flex-col">
+                        <div
+                            class="text-slate-400 uppercase tracking-widest font-bold border-b border-neutral-200 pb-6 mb-8 text-center text-lg">
+                            Antrian Selanjutnya
+                        </div>
+
+                        <div class="flex-1 space-y-4">
+                            <div
+                                class="bg-neutral-50 p-6 rounded-xl flex items-center justify-between border border-neutral-200">
+                                <span class="text-4xl font-bold text-slate-800">A-02</span>
+                                <span
+                                    class="bg-yellow-100 text-yellow-700 border border-yellow-200 font-bold px-3 py-1 rounded text-xs uppercase tracking-wide">Menunggu</span>
+                            </div>
+
+                            <div
+                                class="bg-white p-6 rounded-xl flex items-center justify-between border border-neutral-200 opacity-60">
+                                <span class="text-4xl font-bold text-slate-700">A-03</span>
+                                <span
+                                    class="bg-neutral-100 text-slate-500 border border-neutral-200 font-bold px-3 py-1 rounded text-xs uppercase tracking-wide">Menunggu</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto text-center border-t border-neutral-200 pt-8">
+                            <h2 class="text-5xl font-light text-slate-800"
+                                x-text="new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})"></h2>
+                            <p class="text-slate-400 mt-2 font-medium">Senin, 12 Feb 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholders -->
+            <div x-show="activeTab === 'pendaftaran'" class="h-full flex flex-col p-6 bg-white">
+                <div class="max-w-3xl mx-auto w-full border border-neutral-200 rounded-xl p-8">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 border-b border-neutral-200 pb-4">Registrasi Pasien
+                        Baru</h2>
+
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap</label>
+                            <input type="text"
+                                class="w-full p-2.5 rounded-lg bg-neutral-50 border border-neutral-200 focus:border-primary-500 focus:bg-white"
+                                placeholder="Nama Pasien">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700 mb-2">NIK KTP</label>
+                            <input type="text"
+                                class="w-full p-2.5 rounded-lg bg-neutral-50 border border-neutral-200 focus:border-primary-500 focus:bg-white"
+                                placeholder="35xxxxxxxx">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4 border-t border-neutral-200 gap-3">
+                        <button
+                            class="px-5 py-2 rounded-lg border border-neutral-300 text-slate-600 text-sm font-bold">Reset</button>
+                        <button class="px-6 py-2 bg-primary-600 text-white rounded-lg text-sm font-bold">Daftar</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

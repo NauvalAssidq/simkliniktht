@@ -1,0 +1,472 @@
+- O-Auth2
+  - Generate Token
+- Variabel Tambahan untuk Registrasi Telinga
+  - EpisodeOfCare
+    - EpisodeOfCare - Create Episode Perawatan Telinga
+    - EpisodeOfCare - GET No Surveilans Telinga by ID
+    - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status waitlist (Get EOC dari any organization)
+    - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status waitlist dan organization org_id faskes (Get EOC dari faskes sendiri)
+    - EpisodeOfCare - PATCH Status Active
+    - EpisodeOfCare - GET No Registri Telinga by ID
+    - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active (Get EOC dari any organization)
+    - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active dan organization org_id faskes (Get EOC dari faskes sendiri)
+    - EpisodeOfCare - PATCH Status Finished
+  - Anamnesis
+    - Diabetes Melitus
+      - Observation - Diabetes Melitus
+    - Usia Gestasi saat Kelahiran (minggu)
+      - Observation - Usia Gestasi
+    - Berat Badan Lahir (gram)
+      - Observation - Berat Badan Lahir (gram)
+    - Riwayat Perawatan NICU
+      - Observation - Riwayat Perawatan NICU
+    - Riwayat Hipertensi
+      - Observation - Riwayat Hipertensi
+    - Riwayat Gangguan Ginjal
+      - Observation - Riwayat Gangguan Ginjal
+    - Riwayat Pengobatan Paru
+      - Observation - Riwayat Pengobatan Paru
+    - Riwayat Perawatan Kanker
+      - Observation - Riwayat  Perawatan Kanker
+    - Riwayat Terinfeksi Campak/Rubella
+      - Observation - Riwayat Terinfeksi Campak/Rubella
+  - Status Audiologi
+    - Jenis Pemeriksaan Anatomi
+      - Observation - Jenis Pemeriksaan Anatomi
+    - Jenis Pemeriksaan Fungsi
+      - Observation - Jenis Pemeriksaan Fungsi
+    - Tipe Gangguan Dengar
+      - Telinga Kanan
+        - Observation - Tipe Gangguan Dengar Telinga Kanan
+      - Telinga Kiri
+        - Observation - Tipe Gangguan Dengar Telinga Kiri
+    - Ambang Dengar
+      - Telinga Kanan
+        - Observation - Ambang Dengar Telinga Kanan
+      - Telinga Kiri
+        - Observation - Ambang Dengar Telinga Kiri
+  - Diagnosis
+    - Condition - Diagnosis ICD-10 Telinga Kanan
+    - Condition - Diagnosis ICD-10 Telinga Kiri
+  - Tindakan/Prosedur Medis
+    - Procedure - Tindakan pada Telinga Kanan
+    - Procedure - Tindakan pada Telinga Kiri
+  - Tatalaksana
+    - Edukasi
+      - Procedure - Edukasi
+    - Tatalaksana Gangguan Pendengaran Telinga Kanan
+      - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kanan
+    - Tatalaksana Gangguan Pendengaran Telinga Kiri
+      - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kiri
+  - Akhir Pengobatan Telinga
+    - CarePlan - Akhir Pengobatan Telinga
+  - Dokumen Registrasi Telinga
+    - Composition - Dokumen Registrasi Telinga
+- Contoh Kasus Registrasi Telinga
+  - 00. Membuat Struktur Organisasi dan Lokasi
+    - Organization -  UKP, Kefarmasian, Laboratorium
+    - Organization - Layanan THT
+    - Location - Poli THT
+    - Location - Ruang Bedah Telinga
+    - Organization - Farmasi (Org)
+    - Location - Farmasi (Room)
+  - Kunjungan 1 - Pemeriksaan Audiologi
+    - 01. Mencari Data Pasien dan Nakes
+      - Patient
+        - Patient - Search Name, Birthdate, Gender
+        - Patient - Search Name, Birthdate, NIK
+        - Patient - Search Name, NIK
+      - Practitioner
+        - Practitioner - Search Name, Gender, Birthdate
+        - Practitioner - By Name and NIK
+    - 02. Pendaftaran Kunjungan Rawat Jalan
+      - Pembuatan Kunjungan Baru
+        - Encounter - Kunjungan Baru
+      - Masuk ke Ruang Pemeriksaan
+        - Encounter - Masuk Ruang
+    - 03. Anamnesis
+      - Keluhan Utama
+        - Condition - Keluhan Utama
+      - Keluhan Penyerta
+        - Condition - Keluhan Penyerta
+      - Faktor Risiko
+        - Diabetes Melitus
+          - Observation - Diabetes Melitus
+        - Usia Gestasi saat Kelahiran (minggu)
+          - Observation - Usia Gestasi
+        - Berat Badan Lahir (gram)
+          - Observation - Berat Badan Lahir (gram)
+        - Riwayat Perawatan NICU
+          - Observation - Riwayat Perawatan NICU
+        - Riwayat Hipertensi
+          - Observation - Riwayat Hipertensi
+        - Riwayat Gangguan Ginjal
+          - Observation - Riwayat Gangguan Ginjal
+        - Riwayat Pengobatan Paru
+          - Observation - Riwayat Pengobatan Paru
+        - Riwayat Perawatan Kanker
+          - Observation - Riwayat  Perawatan Kanker
+        - Riwayat Terinfeksi Campak/Rubella
+          - Observation - Riwayat Terinfeksi Campak/Rubella
+      - Riwayat Penyakit
+        - Condition - Riwayat Penyakit Pribadi Sekarang
+        - Condition - Riwayat Penyakit Pribadi Terdahulu
+      - Riwayat Penyakit Keluarga
+        - FamilyMemberHistory - Riwayat Penyakit Keluarga
+      - Riwayat Alergi
+        - Alergi Lingkungan - Debu Rumah
+        - Alergi Makanan - Daging Bebek
+        - Alergi Obat - Azithromycin
+      - Riwayat Pengobatan
+        - Obat bukan dari Fasyankes Sendiri
+          - MedicationStatement - Riwayat Pengobatan (Obat bukan dari Fasyankes Sendiri)
+    - 04. Pemeriksaan Fisik
+      - Pemeriksaan Tanda Tanda Vital
+        - Observation - TD Sistolik
+        - Observation - TD Diastolik
+        - Observation - Suhu Tubuh  
+        - Observation - Denyut Jantung  
+        - Observation - Pernapasan  
+      - Tingkat Kesadaran
+        - Observation - Tingkat Kesadaran  
+      - Pemeriksaan Fisik Head to Toe
+        - Kepala
+          - Observation - Kepala
+        - Telinga
+          - Observation - Telinga
+        - Hidung
+          - Observation - Hidung
+        - Tenggorokan
+          - Observation - Tenggorokan
+    - 05. Pemeriksaan Fungsional
+      - Status Psikologis
+        - Observation - Status Psikologis
+    - 06. Riwayat Perjalanan Penyakit
+      - ClinicalImpression - Riwayat Perjalanan Penyakit
+    - 07. Tujuan Perawatan
+      - Create Tujuan Perawatan
+        - Goal - Create - Tujuan Perawatan
+      - Update Progress Tujuan Perawatan
+        - Goal - Update - Tujuan Perawatan
+    - 08. Rencana Rawat Pasien
+      - CarePlan - Rencana Rawat Pasien
+    - 09. Instruksi Medik dan Keperawatan Pasien
+      - CarePlan - Instruksi Medik dan Keperawatan Pasien
+    - 10. Status Audiologi
+      - Jenis Pemeriksaan Anatomi
+        - Observation - Jenis Pemeriksaan Anatomi
+      - Jenis Pemeriksaan Fungsi
+        - Observation - Jenis Pemeriksaan Fungsi
+      - Tipe Gangguan Dengar
+        - Telinga Kanan
+          - Observation - Tipe Gangguan Dengar Telinga Kanan
+        - Telinga Kiri
+          - Observation - Tipe Gangguan Dengar Telinga Kiri
+      - Ambang Dengar
+        - Telinga Kanan
+          - Observation - Ambang Dengar Telinga Kanan
+        - Telinga Kiri
+          - Observation - Ambang Dengar Telinga Kiri
+        - EpisodeOfCare - Create Episode Perawatan Telinga
+        - EpisodeOfCare - GET No Surveilans Telinga by ID
+    - 11. Rasional Klinis
+      - ClinicalImpression - Rasional Klinis
+    - 12. Diagnosis
+      - Diagnosis Telinga Kanan & Kiri
+        - Condition - Diagnosis ICD-10 Telinga Kanan
+        - Condition - Diagnosis ICD-10 Telinga Kiri
+        - ClinicalImpression - PATCH Rasional Klinis
+      - EpisodeOfCare - PATCH Status Active
+      - EpisodeOfCare - GET No Registri Telinga by ID
+    - 13. Penilaian Risiko
+      - RiskAssessment - Penilaian Risiko
+      - ClinicalImpression - PATCH Rasional Klinis
+    - 14. Tindakan/Prosedur Medis
+      - Procedure - Tindakan Pada Telinga Kanan
+      - Procedure - Tindakan Pada Telinga Kiri
+    - 15. Tatalaksana
+      - Telinga Kanan
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kanan
+      - Telinga Kiri
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kiri
+      - Obat
+        - Peresepan Obat
+          - MedicationRequest - Create
+        - Pengkajian Resep
+          - QuestionnaireResponse - Pengkajian Resep
+        - Pengeluaran Obat
+          - MedicationDispense - Create
+        - Pemberian Obat
+          - MedicationAdministration - Create
+    - 16. Prognosis
+      - ClinicalImpression - Prognosis Baik
+    - 17. Akhir Pengobatan Telinga
+      - CarePlan - Akhir Pengobatan Telinga
+    - 18. Rencana Tindak Lanjut dan Instruksi Tindak Lanjut
+      - ServiceRequest - Kontrol kembali
+    - 19. Kondisi Saat Meninggalkan Rumah Sakit
+      - Condition - Stabil
+    - 20. Cara Keluar dari Rumah Sakit
+      - Encounter - Update (Pulang dan Kontrol Kembali)
+  - Kunjungan 2 - Tatalaksana Bedah
+    - 01. Mencari Data Pasien dan Nakes
+      - Patient
+        - Patient - Search Name, Birthdate, Gender
+        - Patient - Search Name, Birthdate, NIK
+        - Patient - Search Name, NIK
+      - Practitioner
+        - Practitioner - Search Name, Gender, Birthdate
+        - Practitioner - By Name and NIK
+    - 02. Pendaftaran Kunjungan Rawat Jalan
+      - GET EOC Telinga
+        - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active (Get EOC dari any organization)
+        - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active dan organization org_id faskes (Get EOC dari faskes sendiri)
+      - Pembuatan Kunjungan Baru
+        - Encounter - Kunjungan Baru
+      - Masuk ke Ruang Pemeriksaan
+        - Encounter - Masuk Ruang
+    - 03. Anamnesis
+      - Keluhan Utama
+        - Condition - Keluhan Utama
+      - Keluhan Penyerta
+        - Condition - Keluhan Penyerta
+      - Faktor Risiko
+        - Diabetes Melitus
+          - Observation - Diabetes Melitus
+        - Usia Gestasi saat Kelahiran (minggu)
+          - Observation - Usia Gestasi
+        - Berat Badan Lahir (gram)
+          - Observation - Berat Badan Lahir (gram)
+        - Riwayat Perawatan NICU
+          - Observation - Riwayat Perawatan NICU
+        - Riwayat Hipertensi
+          - Observation - Riwayat Hipertensi
+        - Riwayat Gangguan Ginjal
+          - Observation - Riwayat Gangguan Ginjal
+        - Riwayat Pengobatan Paru
+          - Observation - Riwayat Pengobatan Paru
+        - Riwayat Perawatan Kanker
+          - Observation - Riwayat  Perawatan Kanker
+        - Riwayat Terinfeksi Campak/Rubella
+          - Observation - Riwayat Terinfeksi Campak/Rubella
+      - Riwayat Penyakit
+        - Condition - Riwayat Penyakit Sekarang - DM Tipe 2
+        - Condition - Riwayat Penyakit Pribadi Terdahulu
+      - Riwayat Penyakit Keluarga
+        - FamilyMemberHistory - Riwayat Penyakit Keluarga
+      - Riwayat Alergi
+        - Alergi Lingkungan - Debu Rumah
+        - Alergi Makanan - Daging Bebek
+        - Alergi Obat - Azithromycin
+      - Riwayat Pengobatan
+        - Obat bukan dari Fasyankes Sendiri
+          - MedicationStatement - Riwayat Pengobatan (Obat bukan dari Fasyankes Sendiri)
+    - 04. Pemeriksaan Fisik
+      - Pemeriksaan Tanda Tanda Vital
+        - Observation - TD Sistolik
+        - Observation - TD Diastolik
+        - Observation - Suhu Tubuh  
+        - Observation - Denyut Jantung  
+        - Observation - Pernapasan  
+      - Tingkat Kesadaran
+        - Observation - Tingkat Kesadaran  
+      - Pemeriksaan Fisik Head to Toe
+        - Kepala
+          - Observation - Kepala
+        - Telinga
+          - Observation - Telinga
+        - Hidung
+          - Observation - Hidung
+        - Tenggorokan
+          - Observation - Tenggorokan
+    - 05. Pemeriksaan Fungsional
+      - Status Psikologis
+        - Observation - Status Psikologis
+    - 06. Riwayat Perjalanan Penyakit
+      - ClinicalImpression - Riwayat Perjalanan Penyakit
+    - 07. Tujuan Perawatan
+      - Create Tujuan Perawatan
+        - Goal - Create - Tujuan Perawatan
+      - Update Progress Tujuan Perawatan
+        - Goal - Update - Tujuan Perawatan
+    - 08. Rencana Rawat Pasien
+      - CarePlan - Rencana Rawat Pasien
+    - 09. Instruksi Medik dan Keperawatan Pasien
+      - CarePlan - Instruksi Medik dan Keperawatan Pasien
+    - 10. Pemeriksaan Penunjang
+      - Laboratorium
+        - Pemeriksaan Gula Darah Sewaktu
+          - ServiceRequest - Gula Darah Sewaktu
+          - Specimen - Gula Darah Sewaktu
+          - Observation - Gula Darah Sewaktu
+          - DiagnosticReport - Gula Darah Sewaktu
+      - Radiologi
+        - Pemeriksaan CT Telinga
+          - ServiceRequest - Create for SATUSEHAT
+          - ServiceRequest - Create for MWL di dalam DICOM Router
+          - ImagingStudy - GET ID based on Accension Number
+          - Observation - Hasil Pemeriksaan CT Telinga
+          - DiagnosticReport - Laporan Hasil Pemeriksaan CT Telinga
+    - 11. Rasional Klinis
+      - ClinicalImpression - Rasional Klinis
+    - 12. Diagnosis
+      - Condition - Diagnosis ICD-10 Telinga Kanan
+      - Condition - Diagnosis ICD-10 Telinga Kiri
+    - 13. Penilaian Risiko
+      - RiskAssessment - Penilaian Risiko
+      - ClinicalImpression - PATCH Rasional Klinis
+    - 14. Tindakan/Prosedur Medis
+      - Procedure - Tindakan Pada Telinga Kanan - Obat
+      - ServiceRequest - Mastoidectomy
+      - Procedure - Tindakan Pada Telinga Kiri - Mastoidectomy
+    - 15. Tatalaksana
+      - Telinga Kanan
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kanan
+      - Telinga Kiri
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kiri
+      - Obat
+        - Peresepan Obat
+          - MedicationRequest - Create
+        - Pengkajian Resep
+          - QuestionnaireResponse - Pengkajian Resep
+        - Pengeluaran Obat
+          - MedicationDispense - Create
+        - Pemberian Obat
+          - MedicationAdministration - Create
+    - 16. Prognosis
+      - ClinicalImpression - Prognosis Baik
+    - 17. Akhir Pengobatan Telinga
+      - CarePlan - Akhir Pengobatan Telinga
+    - 18. Rencana Tindak Lanjut dan Instruksi Tindak Lanjut
+      - ServiceRequest - Kontrol kembali
+    - 19. Kondisi Saat Meninggalkan Rumah Sakit
+      - Condition - Stabil
+    - 20. Cara Keluar dari Rumah Sakit
+      - Encounter - Update (Pulang dan Kontrol Kembali)
+  - Kunjungan 3 - Rehabilitasi
+    - 01. Mencari Data Pasien dan Nakes
+      - Patient
+        - Patient - Search Name, Birthdate, Gender
+        - Patient - Search Name, Birthdate, NIK
+        - Patient - Search Name, NIK
+      - Practitioner
+        - Practitioner - Search Name, Gender, Birthdate
+        - Practitioner - By Name and NIK
+    - 02. Pendaftaran Kunjungan Pasien
+      - GET EOC Telinga
+        - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active (Get EOC dari any organization)
+        - GET - EpisodeOfCare dengan subject Patient dan type ADM dengan status active dan organization org_id faskes (Get EOC dari faskes sendiri)
+      - Pembuatan Kunjungan Baru
+        - Encounter - Kunjungan Baru
+      - Masuk ke Ruang Pemeriksaan
+        - Encounter - Masuk Ruang
+    - 03. Anamnesis
+      - Keluhan Utama
+        - Condition - Keluhan Utama
+      - Keluhan Penyerta
+        - Condition - Keluhan Penyerta
+      - Faktor Risiko
+        - Diabetes Melitus
+          - Observation - Diabetes Melitus
+        - Usia Gestasi saat Kelahiran (minggu)
+          - Observation - Usia Gestasi
+        - Berat Badan Lahir (gram)
+          - Observation - Berat Badan Lahir (gram)
+        - Riwayat Perawatan NICU
+          - Observation - Riwayat Perawatan NICU
+        - Riwayat Hipertensi
+          - Observation - Riwayat Hipertensi
+        - Riwayat Gangguan Ginjal
+          - Observation - Riwayat Gangguan Ginjal
+        - Riwayat Pengobatan Paru
+          - Observation - Riwayat Pengobatan Paru
+        - Riwayat Perawatan Kanker
+          - Observation - Riwayat  Perawatan Kanker
+        - Riwayat Terinfeksi Campak/Rubella
+          - Observation - Riwayat Terinfeksi Campak/Rubella
+      - Riwayat Penyakit
+        - Condition - Riwayat Penyakit Sekarang- DM Tipe 2
+        - Condition - Riwayat Penyakit Pribadi Terdahulu
+      - Riwayat Penyakit Keluarga
+        - FamilyMemberHistory - Riwayat Penyakit Keluarga
+      - Riwayat Alergi
+        - Alergi Lingkungan - Debu Rumah
+        - Alergi Makanan - Daging Bebek
+        - Alergi Obat- Azithromycin
+      - Riwayat Pengobatan
+        - Obat bukan dari Fasyankes Sendiri
+          - MedicationStatement - Riwayat Pengobatan (Obat bukan dari Fasyankes Sendiri)
+    - 04. Pemeriksaan Fisik
+      - Pemeriksaan Tanda Tanda Vital
+        - Observation - TD Sistolik
+        - Observation - TD Diastolik
+        - Observation - Suhu Tubuh  
+        - Observation - Denyut Jantung  
+        - Observation - Pernapasan  
+      - Tingkat Kesadaran
+        - Observation - Tingkat Kesadaran  
+      - Pemeriksaan Fisik Head to Toe
+        - Kepala
+          - Observation - Kepala
+        - Telinga
+          - Observation - Telinga
+        - Hidung
+          - Observation - Hidung
+        - Tenggorokan
+          - Observation - Tenggorokan
+    - 05. Pemeriksaan Fungsional
+      - Status Psikologis
+        - Observation - Status Psikologis
+    - 06. Riwayat Perjalanan Penyakit
+      - ClinicalImpression - Riwayat Perjalanan Penyakit
+    - 07. Tujuan Perawatan
+      - Create Tujuan Perawatan
+        - Goal - Create - Tujuan Perawatan
+      - Update Progress Tujuan Perawatan
+        - Goal - Update - Tujuan Perawatan
+    - 08. Rencana Rawat Pasien
+      - CarePlan - Rencana Rawat Pasien
+    - 09. Instruksi Medik dan Keperawatan Pasien
+      - CarePlan - Instruksi Medik dan Keperawatan Pasien
+    - 10. Status Audiologi
+      - Jenis Pemeriksaan Anatomi
+        - Observation - Jenis Pemeriksaan Anatomi
+      - Jenis Pemeriksaan Fungsi
+        - Observation - Jenis Pemeriksaan Fungsi
+      - Tipe Gangguan Dengar
+        - Telinga Kanan
+          - Observation - Tipe Gangguan Dengar Telinga Kanan
+        - Telinga Kiri
+          - Observation - Tipe Gangguan Dengar Telinga Kiri
+      - Ambang Dengar
+        - Telinga Kanan
+          - Observation - Ambang Dengar Telinga Kanan
+        - Telinga Kiri
+          - Observation - Ambang Dengar Telinga Kiri
+    - 11. Rasional Klinis
+      - ClinicalImpression - Rasional Klinis
+    - 12. Diagnosis
+      - Condition - Diagnosis ICD-10 Telinga Kanan
+      - Condition - Diagnosis ICD-10 Telinga Kiri
+    - 13. Penilaian Risiko
+      - RiskAssessment - Penilaian Risiko
+      - ClinicalImpression - PATCH Rasional Klinis
+    - 14. Tindakan/Prosedur Medis
+      - Procedure - Tindakan Pada Telinga Kanan
+      - Procedure - Tindakan Pada Telinga Kiri
+    - 15. Tatalaksana
+      - Telinga Kanan
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kanan
+      - Telinga Kiri
+        - Observation - Tatalaksana Gangguan Pendengaran pada Telinga Kiri
+      - Edukasi
+        - Procedure - Edukasi
+    - 16. Prognosis
+      - ClinicalImpression - Prognosis Baik
+    - 17. Akhir Pengobatan Telinga
+      - CarePlan - Akhir Pengobatan Telinga
+    - 18. Kondisi Saat Meninggalkan Fasyankes
+      - Condition - Stabil
+    - 19. Cara Keluar dari Rumah Sakit
+      - Encounter - Update (Finished + Diagnosis)
+      - EpisodeOfCare - PATCH Status Finished
