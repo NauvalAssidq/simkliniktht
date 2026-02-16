@@ -67,7 +67,7 @@ class AntrianController extends Controller
             return response()->json(['status' => 'success']);
         }
 
-        return response()->json(['status' => 'error', 'message' => 'Queue entry not found'], 404);
+        return response()->json(['status' => 'error', 'message' => 'Data antrian tidak ditemukan'], 404);
     }
 
     public function reset()

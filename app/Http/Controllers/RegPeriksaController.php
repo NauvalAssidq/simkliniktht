@@ -195,12 +195,12 @@ class RegPeriksaController extends Controller
 
             DB::commit();
 
-            return redirect()->back()->with('success', 'Registration Successful! ' . ($ihsId ? 'Connected to SatuSehat.' : ''));
+            return redirect()->back()->with('success', 'Pendaftaran berhasil! ' . ($ihsId ? 'Terhubung ke SatuSehat.' : ''));
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Registration Error: ' . $e->getMessage());
-            return back()->with('error', 'Registration Failed: ' . $e->getMessage());
+            return back()->with('error', 'Pendaftaran gagal: ' . $e->getMessage());
         }
     }
 

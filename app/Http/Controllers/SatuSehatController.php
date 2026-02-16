@@ -46,7 +46,7 @@ class SatuSehatController extends Controller
         $token = $this->getAccessToken();
 
         if (!$token) {
-            return ['status' => 'failed', 'code' => 401, 'response' => ['message' => 'Cannot obtain access token']];
+            return ['status' => 'failed', 'code' => 401, 'response' => ['message' => 'Gagal mendapatkan token akses']];
         }
 
         $url = $this->baseUrl . '/' . $endpoint;
@@ -77,7 +77,7 @@ class SatuSehatController extends Controller
                     $response = $http->delete($url);
                     break;
                 default:
-                    return ['status' => 'failed', 'code' => 400, 'response' => ['message' => 'Invalid HTTP method']];
+                    return ['status' => 'failed', 'code' => 400, 'response' => ['message' => 'Metode HTTP tidak valid']];
             }
 
             return [

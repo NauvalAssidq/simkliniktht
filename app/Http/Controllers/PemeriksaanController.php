@@ -170,7 +170,7 @@ class PemeriksaanController extends Controller
 
         DB::beginTransaction();
         try {
-            Log::info('Saving Pemeriksaan Data', $request->all());
+            Log::info('Menyimpan Data Pemeriksaan', $request->all());
 
             $reg = RegPeriksa::where('no_rawat', $request->no_rawat)->first();
 
@@ -327,7 +327,7 @@ class PemeriksaanController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error saving exam: ' . $e->getMessage());
+            Log::error('Gagal menyimpan pemeriksaan: ' . $e->getMessage());
             return response()->json(['message' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
         }
     }

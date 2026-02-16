@@ -223,6 +223,14 @@
                             </table>
                         </div>
 
+                        {{-- Print Button (always visible) --}}
+                        <div class="px-6 py-3 border-t border-neutral-100 flex justify-end">
+                            <button @click="printResep()" class="px-4 py-2 border border-neutral-200 text-slate-600 rounded-lg text-sm font-bold hover:bg-neutral-50 transition-colors flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                                Cetak Resep
+                            </button>
+                        </div>
+
                         {{-- Action Buttons --}}
                         <template x-if="detail.status === 'menunggu'">
                             <div class="px-6 py-4 border-t border-neutral-200 bg-neutral-50 flex items-center justify-between">
@@ -323,6 +331,73 @@
                             window.dispatchEvent(new CustomEvent('notify', { detail: { message: data.message, type: 'error' } }));
                         }
                     });
+                },
+
+                printResep() {
+                    const d = this.detail;
+                    let rows = '';
+                    d.items.forEach((item, i) => {
+                        rows += `<tr>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;text-align:center;">${i+1}</td>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;">${item.nama_obat}</td>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;text-align:center;">${item.jumlah} ${item.satuan || ''}</td>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;">${item.dosis || '-'}</td>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;">${item.frekuensi || '-'}</td>
+                            <td style="padding:6px 10px;border-bottom:1px solid #e5e7eb;">${item.instruksi || '-'}</td>
+                        </tr>`;
+                    });
+
+                    const html = `<!DOCTYPE html>
+<html><head><title>Resep ${d.no_resep}</title>
+<style>
+  @page { size: A5 landscape; margin: 10mm; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; color: #1e293b; margin: 0; padding: 20px; }
+  .header { text-align: center; border-bottom: 2px solid #0284c7; padding-bottom: 12px; margin-bottom: 16px; }
+  .header h1 { font-size: 18px; margin: 0; color: #0284c7; }
+  .header p { margin: 2px 0; color: #64748b; font-size: 11px; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; font-size: 12px; }
+  .info-grid .label { color: #94a3b8; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+  .info-grid .value { font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  thead th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  thead th:first-child, td:first-child { text-align: center; }
+  .footer { margin-top: 24px; display: flex; justify-content: space-between; font-size: 11px; }
+  .sign-box { text-align: center; width: 160px; }
+  .sign-box .line { margin-top: 50px; border-top: 1px solid #1e293b; padding-top: 4px; }
+  .rx-symbol { font-size: 20px; font-weight: bold; font-style: italic; color: #0284c7; }
+  @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+</style></head><body>
+  <div class="header">
+    <h1>KLINIK THT</h1>
+    <p>Jl. Alamat Klinik No. 123, Kota</p>
+    <p>Telp: (021) 1234567</p>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <span class="rx-symbol">R/</span>
+    <span style="color:#94a3b8;font-size:11px;">No. Resep: <strong style="color:#1e293b;">${d.no_resep}</strong></span>
+  </div>
+  <div class="info-grid">
+    <div><span class="label">Pasien</span><br><span class="value">${d.pasien}</span></div>
+    <div><span class="label">Dokter</span><br><span class="value">Dr. ${d.dokter}</span></div>
+    <div><span class="label">Tanggal</span><br><span class="value">${d.tgl_resep} ${(d.jam_resep||'').substring(0,5)}</span></div>
+    <div><span class="label">No. Rawat</span><br><span class="value">${d.no_rawat}</span></div>
+  </div>
+  <table>
+    <thead><tr>
+      <th>#</th><th>Nama Obat</th><th style="text-align:center;">Jumlah</th><th>Dosis</th><th>Frekuensi</th><th>Instruksi</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>
+  <div class="footer">
+    <div class="sign-box"><div class="line">Apoteker</div></div>
+    <div class="sign-box"><div class="line">Dr. ${d.dokter}</div></div>
+  </div>
+</body></html>`;
+
+                    const w = window.open('', '_blank', 'width=800,height=600');
+                    w.document.write(html);
+                    w.document.close();
+                    w.onload = () => { w.print(); };
                 }
             }
         }
