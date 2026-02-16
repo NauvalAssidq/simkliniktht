@@ -11,4 +11,9 @@ class Pasien extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = [];
+
+    public function satuSehatMapping()
+    {
+        return $this->hasOne(SatuSehatMappingPasien::class, 'no_rkm_medis', 'no_rkm_medis');
+    }
 }

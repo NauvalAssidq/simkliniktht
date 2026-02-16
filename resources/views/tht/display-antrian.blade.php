@@ -47,9 +47,14 @@
                 <div class="animate-pulse bg-white p-6 rounded-xl h-24 border border-neutral-200 opacity-60"></div>
             </div>
 
-            <div class="mt-auto text-center border-t border-neutral-200 pt-8">
+            <div class="mt-auto text-center border-t border-neutral-200 pt-8 relative">
                 <h2 class="text-5xl font-light text-slate-800" id="clock">--:--</h2>
                 <p class="text-slate-400 mt-2 font-medium">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+
+                <!-- Hidden/Small Reset Button -->
+                <button onclick="resetQueue()" class="absolute bottom-0 right-0 text-slate-300 hover:text-red-500 p-2 transition-colors" title="Reset Antrian">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
             </div>
         </div>
     </div>
@@ -122,7 +127,17 @@
         }
 
         setInterval(updateQueue, 3000);
+        setInterval(updateQueue, 3000);
         updateQueue();
+
+        function resetQueue() {
+            if(confirm('Reset antrian hari ini?')) {
+                $.post('/antrian/reset', {_token: '{{ csrf_token() }}'}, function() {
+                    lastNumber = '';
+                    updateQueue();
+                });
+            }
+        }
     </script>
 </body>
 </html>

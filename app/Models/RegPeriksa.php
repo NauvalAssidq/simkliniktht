@@ -26,4 +26,9 @@ class RegPeriksa extends Model
     {
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }
+
+    public function antrian()
+    {
+        return $this->hasOne(AntriPoli::class, 'no_rawat', 'no_rawat');
+    }
 }

@@ -55,9 +55,28 @@ class AntrianController extends Controller
             ]);
 
         if ($updated) {
+            // Trigger SatuSehat Status Update (arrived -> in-progress)
+            try {
+                $bridgingService = new \App\Services\SatuSehatBridgingService();
+                $bridgingService->startEncounter($no_rawat);
+            } catch (\Exception $e) {
+                \Log::error("Error starting SatuSehat encounter for $no_rawat: " . $e->getMessage());
+                // Don't fail the UI based on bridging error
+            }
+
             return response()->json(['status' => 'success']);
         }
 
         return response()->json(['status' => 'error', 'message' => 'Queue entry not found'], 404);
+    }
+
+    public function reset()
+    {
+        // Delete all queue for today
+        AntriPoli::where('tgl_antrian', date('Y-m-d'))
+            ->where('kd_poli', 'U0001')
+            ->delete();
+
+        return response()->json(['status' => 'success']);
     }
 }

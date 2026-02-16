@@ -11,6 +11,8 @@ use App\Models\DiagnosaPasien;
 use App\Models\RawatJlDr;
 use App\Models\PemeriksaanAudiologi;
 use App\Models\PemeriksaanRalanLaterality;
+use App\Models\ResepObat;
+use App\Models\DetailResepObat;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
@@ -43,29 +45,45 @@ class PemeriksaanController extends Controller
             ->select('rawat_jl_dr.*', 'jns_perawatan.nm_perawatan', 'jns_perawatan.total_byr', 'pemeriksaan_ralan_laterality.sisi as laterality')
             ->get();
 
+        $encounter = \App\Models\SatuSehatEncounter::where('no_rawat', $no_rawat)->first();
+
         return response()->json([
             'soap' => $soap,
             'audiologi' => $audiologi,
             'diagnosa' => $diagnosa,
-            'procedures' => $procedures
+            'procedures' => $procedures,
+            'encounter' => $encounter
         ]);
     }
 
     public function index()
     {
-        $queue = RegPeriksa::with(['pasien', 'dokter', 'poliklinik'])
+        $kd_dokter = auth()->user()->kd_dokter;
+
+        $queue = RegPeriksa::with(['pasien.satuSehatMapping', 'dokter', 'poliklinik', 'antrian'])
             ->whereDate('tgl_registrasi', date('Y-m-d'))
-            ->orderBy('jam_reg', 'asc') // FIFO
+            ->where('stts', 'Belum')
+            ->when($kd_dokter, function($q) use ($kd_dokter) {
+                $q->where('kd_dokter', $kd_dokter);
+            })
+            ->orderBy('jam_reg', 'asc')
             ->get();
             
-        return view('tht.examination', compact('queue'));
+        $doctors = \App\Models\Dokter::where('status', '1')->get();
+        return view('tht.examination', compact('queue', 'doctors'));
     }
 
     public function getQueue(Request $request)
     {
         $search = $request->get('q');
-        $query = RegPeriksa::with(['pasien', 'dokter', 'poliklinik'])
+        $kd_dokter = auth()->user()->kd_dokter;
+
+        $query = RegPeriksa::with(['pasien.satuSehatMapping', 'dokter', 'poliklinik', 'antrian'])
             ->whereDate('tgl_registrasi', date('Y-m-d'))
+            ->where('stts', 'Belum')
+            ->when($kd_dokter, function($q) use ($kd_dokter) {
+                $q->where('kd_dokter', $kd_dokter);
+            })
             ->orderBy('jam_reg', 'asc');
 
         if ($search) {
@@ -77,6 +95,48 @@ class PemeriksaanController extends Controller
 
         $queue = $query->get();
         return response()->json($queue);
+    }
+
+    public function getMedicalHistory(Request $request)
+    {
+        $noRkmMedis = $request->get('no_rkm_medis');
+        $excludeNoRawat = $request->get('exclude'); // current visit
+
+        $visits = RegPeriksa::with(['dokter', 'poliklinik'])
+            ->where('no_rkm_medis', $noRkmMedis)
+            ->where('stts', '!=', 'Belum')
+            ->when($excludeNoRawat, fn($q) => $q->where('no_rawat', '!=', $excludeNoRawat))
+            ->orderBy('tgl_registrasi', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($visit) {
+                $diagnoses = DiagnosaPasien::where('no_rawat', $visit->no_rawat)
+                    ->get(['kd_penyakit', 'nm_penyakit']);
+
+                $procedures = RawatJlDr::where('no_rawat', $visit->no_rawat)
+                    ->get(['kd_jenis_prw', 'nm_perawatan']);
+
+                $soap = PemeriksaanRalan::where('no_rawat', $visit->no_rawat)->first();
+
+                $resep = ResepObat::with('detail')->where('no_rawat', $visit->no_rawat)->first();
+
+                return [
+                    'no_rawat'   => $visit->no_rawat,
+                    'tgl'        => $visit->tgl_registrasi,
+                    'dokter'     => $visit->dokter->nm_dokter ?? '-',
+                    'poli'       => $visit->poliklinik->nm_poli ?? '-',
+                    'keluhan'    => $soap->keluhan ?? null,
+                    'penilaian'  => $soap->penilaian ?? null,
+                    'diagnosa'   => $diagnoses,
+                    'prosedur'   => $procedures,
+                    'obat'       => $resep ? $resep->detail->map(fn($d) => [
+                        'nama' => $d->nama_obat ?? $d->kd_brng,
+                        'jumlah' => $d->jumlah,
+                    ]) : [],
+                ];
+            });
+
+        return response()->json($visits);
     }
 
     public function searchDiagnosis(Request $request)
@@ -105,7 +165,7 @@ class PemeriksaanController extends Controller
             'no_rawat' => 'required|exists:reg_periksa,no_rawat',
             'keluhan' => 'required',
             'penilaian' => 'required',
-            'instruksi' => 'required',
+            'instruksi' => 'nullable',
         ]);
 
         DB::beginTransaction();
@@ -126,7 +186,7 @@ class PemeriksaanController extends Controller
                     'rtl' => $request->instruksi,
                     'suhu_tubuh' => $request->suhu_tubuh ?? '-',
                     'tensi' => $request->tensi ?? '-',
-                    'nip' => $reg->kd_dokter ?? '-'
+                    'nip' => (!empty($request->kd_dokter)) ? $request->kd_dokter : $reg->kd_dokter
                 ]
             );
 
@@ -205,10 +265,65 @@ class PemeriksaanController extends Controller
                 }
             }
 
+            // Save Prescription (Resep Obat)
+            if ($request->has('resep') && is_array($request->resep) && count($request->resep) > 0) {
+                // auto-increment no_resep: RSP-YYYYMMDD-NNN
+                $today = date('Ymd');
+                $lastResep = ResepObat::where('no_resep', 'like', "RSP-{$today}-%")
+                    ->orderBy('no_resep', 'desc')
+                    ->first();
+                $seq = $lastResep 
+                    ? (intval(substr($lastResep->no_resep, -3)) + 1) 
+                    : 1;
+                $noResep = "RSP-{$today}-" . str_pad($seq, 3, '0', STR_PAD_LEFT);
+
+                $resep = ResepObat::create([
+                    'no_resep'  => $noResep,
+                    'no_rawat'  => $request->no_rawat,
+                    'kd_dokter' => (!empty($request->kd_dokter)) ? $request->kd_dokter : $reg->kd_dokter,
+                    'tgl_resep' => date('Y-m-d'),
+                    'jam_resep' => date('H:i:s'),
+                    'status'    => 'menunggu',
+                ]);
+
+                foreach ($request->resep as $item) {
+                    DetailResepObat::create([
+                        'no_resep'        => $noResep,
+                        'kd_brng'         => $item['kd_brng'] ?? null,
+                        'nm_obat_manual'  => $item['nm_brng'] ?? null,
+                        'jumlah'          => $item['jumlah'] ?? 1,
+                        'dosis'           => $item['dosis'] ?? null,
+                        'frekuensi'       => $item['frekuensi'] ?? null,
+                        'instruksi'       => $item['instruksi'] ?? null,
+                    ]);
+                }
+            }
+
             $reg->update(['stts' => 'Sudah']);
             DB::commit();
 
-            return response()->json(['message' => 'Data berhasil disimpan', 'redirect' => route('pemeriksaan.index')]);
+            // --- AUTO BRIDGE TO SATUSEHAT ---
+            try {
+                $bridgingService = new \App\Services\SatuSehatBridgingService();
+                $bridgeResult = $bridgingService->bridgeEncounter($request->no_rawat);
+                
+                if ($bridgeResult['success']) {
+                    return response()->json([
+                        'message' => 'Pemeriksaan Selesai & Terkirim ke SatuSehat!', 
+                        'redirect' => route('pemeriksaan.index')
+                    ]);
+                } else {
+                    return response()->json([
+                        'message' => 'Pemeriksaan Selesai, tapi Gagal Bridging: ' . $bridgeResult['message'], 
+                        'redirect' => route('pemeriksaan.index')
+                    ]);
+                }
+            } catch (\Exception $ex) {
+                return response()->json([
+                    'message' => 'Pemeriksaan Selesai, Bridging Error: ' . $ex->getMessage(), 
+                    'redirect' => route('pemeriksaan.index')
+                ]);
+            }
 
         } catch (\Exception $e) {
             DB::rollBack();

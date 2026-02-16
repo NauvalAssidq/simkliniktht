@@ -1,0 +1,331 @@
+--- Tipe Gangguan Dengar Telinga Kanan ---
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "category": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "exam",
+                    "display": "Exam"
+                }
+            ]
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "47078008",
+                "display": "Hearing, function"
+            }
+        ]
+    },
+    "subject": {
+        "reference": "Patient/{{Patient_id}}",
+        "display": "{{Patient_name}}"
+    },
+    "encounter": {
+        "reference": "Encounter/{{Encounter_id_1}}",
+        "display": "Kunjungan {{Patient_name}} pada tanggal 1 September 2024"
+    },
+    "effectiveDateTime": "2024-09-01T06:00:00+00:00",
+    "issued": "2024-09-01T06:05:00+00:00",
+    "performer": [
+        {
+            "reference": "Practitioner/{{Practitioner_id}}",
+            "display": "{{Practitioner_name}}"
+        }
+    ],
+    "valueCodeableConcept": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "1010236009",
+                "display": "Conductive hearing loss of right ear"
+            }
+        ]
+    },
+    "bodySite": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "25577004",
+                "display": "Right ear structure"
+            }
+        ]
+    }
+}
+
+--- Tipe Gangguan Dengar Telinga Kiri ---
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "category": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "exam",
+                    "display": "Exam"
+                }
+            ]
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "47078008",
+                "display": "Hearing, function"
+            }
+        ]
+    },
+    "subject": {
+        "reference": "Patient/{{Patient_id}}",
+        "display": "{{Patient_name}}"
+    },
+    "encounter": {
+        "reference": "Encounter/{{Encounter_id_1}}",
+        "display": "Kunjungan {{Patient_name}} pada tanggal 1 September 2024"
+    },
+    "effectiveDateTime": "2024-09-01T06:10:00+00:00",
+    "issued": "2024-09-01T06:15:00+00:00",
+    "performer": [
+        {
+            "reference": "Practitioner/{{Practitioner_id}}",
+            "display": "{{Practitioner_name}}"
+        }
+    ],
+    "valueCodeableConcept": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "77507001",
+                "display": "Mixed conductive AND sensorineural hearing loss"
+            }
+        ]
+    },
+    "bodySite": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "89644007",
+                "display": "Left ear structure"
+            }
+        ]
+    }
+}
+
+--- Jenis Pemeriksaan Anatomi ---
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "category": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "survey",
+                    "display": "Survey"
+                }
+            ]
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "http://snomed.info/sct",
+                "code": "385898003",
+                "display": "Ear care assessment"
+            }
+        ]
+    },
+    "subject": {
+        "reference": "Patient/{{Patient_id}}",
+        "display": "{{Patient_name}}"
+    },
+    "encounter": {
+        "reference": "Encounter/{{Encounter_id_1}}",
+        "display": "Kunjungan {{Patient_name}} pada tanggal 1 September 2024"
+    },
+    "effectiveDateTime": "2024-09-01T05:40:00+00:00",
+    "issued": "2024-09-01T05:45:00+00:00",
+    "performer": [
+        {
+            "reference": "Practitioner/{{Practitioner_id}}",
+            "display": "{{Practitioner_name}}"
+        }
+    ],
+    "component": [
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://terminology.kemkes.go.id",
+                        "code": "TK000140",
+                        "display": "Lampu Kepala"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://terminology.kemkes.go.id",
+                        "code": "TK000143",
+                        "display": "Otoskopi"
+                    }
+                ]
+            },
+            "valueBoolean": true
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "76517002",
+                        "display": "Endoscopy of ear"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "445974009",
+                        "display": "Microscopy of middle ear"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        }
+    ],
+    "valueCodeableConcept": {
+        "coding": [
+            {
+                "system": "http://terminology.kemkes.go.id",
+                "code": "TK000134",
+                "display": "Belum dapat dinilai"
+            }
+        ]
+    },
+    "note": [
+        {
+            "text": "Pada telinga kanan (liang telinga lapang, membran timpani perforasi subtotal, tidak tampak jaringan granulasi dan kolesteatoma) dan pada telinga kiri (liang telinga sempit, stenosis dan membran timpani sukar dinilai)"
+        }
+    ] 
+}
+
+--- Jenis Pemeriksaan Fungsi ---
+{
+    "resourceType": "Observation",
+    "status": "final",
+    "category": [
+        {
+            "coding": [
+                {
+                    "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                    "code": "survey",
+                    "display": "Survey"
+                }
+            ]
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "http://terminology.kemkes.go.id",
+                "code": "TK000135",
+                "display": "Pemeriksaan Fungsi"
+            }
+        ]
+    },
+    "subject": {
+        "reference": "Patient/{{Patient_id}}",
+        "display": "{{Patient_name}}"
+    },
+    "encounter": {
+        "reference": "Encounter/{{Encounter_id_1}}",
+        "display": "Kunjungan {{Patient_name}} pada tanggal 1 September 2024"
+    },
+    "effectiveDateTime": "2024-09-01T05:50:00+00:00",
+    "issued": "2024-09-01T05:55:00+00:00",
+    "performer": [
+        {
+            "reference": "Practitioner/{{Practitioner_id}}",
+            "display": "{{Practitioner_name}}"
+        }
+    ],
+    "component": [
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://terminology.kemkes.go.id",
+                        "code": "TK000136",
+                        "display": "Garpu Tala"
+                    }
+                ]
+            },
+            "valueBoolean": true
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "252623004",
+                        "display": "Oto-acoustic emission test"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "102972004",
+                        "display": "Brain stem auditory evoked potential, function"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "91573000",
+                        "display": "Tympanometry testing"
+                    }
+                ]
+            },
+            "valueBoolean": false
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "21727005",
+                        "display": "Audiometry"
+                    }
+                ]
+            },
+            "valueBoolean": true
+        }
+    ],
+    "valueString": "Hasil pemeriksaan garpu tala sulit diinterpretasikan, dan membutuhkan pemeriksaan pendengaran dengan audiometri"
+}
+

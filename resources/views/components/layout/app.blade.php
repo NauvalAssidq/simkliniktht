@@ -26,11 +26,13 @@
         <x-layout.header :title="$title ?? 'SimKlinik'" />
 
         <!-- Content Area -->
-        <div class="flex-1 overflow-hidden relative">
-            <div class="h-full overflow-y-auto">
+        <div class="flex-1 relative flex flex-col min-h-0 overflow-hidden">
+            <div class="flex-1 overflow-y-auto">
                 {{ $slot }}
             </div>
         </div>
+        
+        <x-ui.toast />
     </main>
 
 </body>
